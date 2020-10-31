@@ -92,18 +92,18 @@ class ListStd {
 	// argId 학생 ID 값을 이용해 해당 객체 리스트 내 삭제, 없을 시 false 반환
 	boolean deleteStudentById(int argId) {
 		Node temp = head.getNextNode();
-		Node previousNode = head.getNextNode();
+		Node previousNode = head;
 		
 		// 순회해서 입력받은 id의 학생 찾기
 		while(temp != tail) {
 			if(temp.getStdInfo().getId() == argId) {
-				previousNode.setNextNode(temp);   
-				temp = null;					  
+				previousNode.setNextNode(temp.getNextNode());   
+				temp = null;			  
 				
 				return true;
 			}
 			previousNode = temp;
-			temp = temp.getNextNode();
+			temp = temp.getNextNode(); // 순회
 		}
 		return false;
 	}
@@ -113,6 +113,7 @@ class ListStd {
 		return numOfData;
 	}
 	
+	// 리스트 내 모든 학생 정보 획득
 	void stdList() {
 		Node temp = head.getNextNode();
 		
@@ -123,6 +124,13 @@ class ListStd {
 			
 			temp = temp.getNextNode();
 		}
+	}
+	
+	// 특정 학생 정보 획득
+	void stdList(Student argObj) {
+		System.out.println("입력순번        학번         국어    영어     수학     총점      평균     순위");
+			System.out.printf("  %d     %d    %d   %d    %d   %d    %d \n",
+				argObj.getNum(), argObj.getId(), argObj.getKor(), argObj.getEng(), argObj.getMath(), argObj.getSum(), argObj.getAvg());
 	}
 	
 	void stdRank() {
@@ -160,9 +168,11 @@ public class stdManagement {
 				Student std = new Student();
 				
 				System.out.println("학번을 입력 하세요:");
+				
 				while(true) {
 				int inputId = sc.nextInt();
 				std.setId(inputId);
+				// 중복 확인
 				if(myList.getStudentById(inputId) != null) {
 					System.out.println("등록된 학번 입니다. 재입력 하세요.");
 				} else {
@@ -194,9 +204,7 @@ public class stdManagement {
 						System.out.println("입력하신 학번은 없는 학번입니다. 다시 입력하세요.");
 					} else {
 						std = myList.getStudentById(findId);
-						System.out.println("입력순번        학번         국어    영어     수학     총점      평균     순위");
-						System.out.printf("  %d     %d    %d   %d    %d   %d    %d \n",
-								std.getNum(), std.getId(), std.getKor(), std.getEng(), std.getMath(), std.getSum(), std.getAvg());
+						myList.stdList(std);
 						break;
 					} 
 				} break;
@@ -204,14 +212,18 @@ public class stdManagement {
 				// 학생 삭제
 				System.out.println("삭제 할 학생의 학번을 입력 하세요");
 				
-				int rmId = sc.nextInt();
-				if(!myList.deleteStudentById(rmId))
-					System.out.println("입력하신 학번은 없는 학번입니다. 다시 입력하세요.");
-				else {
-					myList.deleteStudentById(rmId);
-					System.out.println("삭제되었습니다.");
-				}
-				break;
+				while(true) {
+					int rmId = sc.nextInt();
+					if(myList.getStudentById(rmId) == null) {
+						System.out.println("입력하신 학번은 없는 학번입니다. 다시 입력하세요.");
+					} else {
+						std = myList.getStudentById(rmId);
+						myList.stdList(std);
+						myList.deleteStudentById(rmId);
+						System.out.println("삭제되었습니다.");
+						break;
+					}
+				} break;
 			case 5:
 				// 종료
 				System.out.println("5. 프로그램 종료");
